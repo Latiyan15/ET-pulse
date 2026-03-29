@@ -184,15 +184,41 @@ function getMockArticles() {
  */
 async function fetchFromGNews(query, max = 10) {
   if (!GNEWS_API_KEY) {
-    console.warn('⚠️ No GNEWS_API_KEY set, returning mock data');
-    return getMockArticles();
+    console.warn('⚠️ No GNEWS_API_KEY set, searching mock database for:', query);
+    const mockDb = getMockArticles();
+    const queryLower = query.toLowerCase();
+    
+    // 1. Try exact ID lookup first
+    const byId = mockDb.find(a => a.id === query);
+    if (byId) return [byId];
+
+    // 2. Try exact SECTOR match (high priority for "it", "auto", etc.)
+    const bySector = mockDb.filter(a => a.sector.toLowerCase() === queryLower);
+    if (bySector.length > 0) return bySector.slice(0, max);
+
+    // 3. Perform PRECISE keyword search (using word boundaries)
+    const regex = new RegExp(`\\b${queryLower}\\b`, 'i');
+    const results = mockDb.filter(a => 
+      regex.test(a.title) || 
+      (a.content && regex.test(a.content))
+    );
+
+    return results.length > 0 ? results.slice(0, max) : [];
   }
 
   const cacheKey = `gnews:${query}:${max}`;
   const cached = getCached(cacheKey);
   if (cached) return cached;
 
-  const searchQuery = cleanQuery(query);
+  // Augment short sector queries to prevent substring matches (e.g., "it" matching "Profit")
+  let augmentedQuery = query;
+  const qLower = query.toLowerCase();
+  if (qLower === 'it') augmentedQuery = 'IT technology Infosys TCS India';
+  else if (qLower === 'auto') augmentedQuery = 'automobile EV India';
+  else if (qLower === 'pharma') augmentedQuery = 'pharmaceutical healthcare India';
+  else if (qLower === 'banking') augmentedQuery = 'banking finance RBI India';
+
+  const searchQuery = augmentedQuery.trim();
 
   try {
     console.log(`📡 GNews Search: "${searchQuery}" (Original: "${query}")`);
@@ -224,7 +250,11 @@ async function fetchFromGNews(query, max = 10) {
     return articles;
   } catch (error) {
     console.error(`❌ GNews API Error for "${query}":`, error.message);
-    return getMockArticles();
+    const queryLower = query.toLowerCase();
+    return getMockArticles().filter(a => 
+      a.title.toLowerCase().includes(queryLower) || 
+      a.sector.toLowerCase().includes(queryLower)
+    ).slice(0, max);
   }
 }
 
@@ -324,11 +354,14 @@ async function fetchArticlesByProfile(sectors = [], interests = [], extraTopic =
       }];
     }
 
-    // Fallback to mock if search returns nothing
-    return getMockArticles().filter(a =>
+    // 3. Fallback to mock if search returns nothing
+    const fallback = getMockArticles().filter(a =>
       a.title?.toLowerCase().includes(extraTopic.toLowerCase()) ||
       a.sector?.toLowerCase() === extraTopic.toLowerCase()
     );
+
+    // CRITICAL: Always return here to prevent falling through to generic profile sectors
+    return fallback.length > 0 ? fallback : [];
   }
 
   // --- Sector-based feed (home page tabs / Your Interests) ---
