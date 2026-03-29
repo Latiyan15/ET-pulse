@@ -1,0 +1,272 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Brand Colors — Standard Palette */
+  --brand-red: #E53935;
+  --brand-red-dark: #b71c1c;
+  --brand-red-tint: #ffcdd2;
+  
+  --brand-navy: #1a1a2e;
+  --brand-black: #111111;
+  --brand-slate: #374151;
+
+  --brand-green: #2e7d32;
+  --brand-green-strong: #1b5e20;
+  --brand-green-tint: #e8f5e9;
+
+  --brand-amber: #f59e0b;
+  --brand-amber-dark: #d97706;
+  --brand-amber-tint: #fef3c7;
+
+  /* UI Colors — Warm Theme */
+  --bg-primary: #f5f0e8;   /* Warm parchment background */
+  --bg-section: #faf9f6;   /* Section background */
+  --bg-secondary: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #fdfaf5;
+  --bg-glass: rgba(26, 26, 46, 0.04);
+  --bg-glass-strong: rgba(26, 26, 46, 0.08);
+
+  /* Typography */
+  --text-primary: #111111;   /* Headlines */
+  --text-secondary: #4b5563; /* Body / Description */
+  --text-meta: #9ca3af;      /* Meta / Timestamps */
+  --text-muted: #94a3b8;     /* Placeholders / Disabled */
+
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-warm: #e8e0d0;    /* Primary warm border */
+  --border-active: #E53935;  /* Red for active states */
+
+  /* Gradients */
+  --gradient-brand: linear-gradient(135deg, #111111, #1a1a2e, #E53935);
+  --gradient-card: linear-gradient(145deg, rgba(232, 224, 208, 0.2), rgba(232, 224, 208, 0.05));
+
+  /* Spacing */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows — Warm theme */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 12px rgba(26, 26, 46, 0.08);
+  --shadow-lg: 0 8px 24px rgba(26, 26, 46, 0.1);
+  --shadow-glow: 0 0 20px rgba(229, 57, 53, 0.12);
+
+  /* Typography Fonts */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-heading: 'Outfit', -apple-system, sans-serif;
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Dynamic Global Background Layer - Newspaper Texture */
+/* Dynamic Global Background Layer - Newspaper Texture */
+.dynamic-newspaper-bg {
+  position: fixed;
+  top: -5%;
+  left: -5%;
+  width: 110vw;
+  height: 110vh;
+  background-image: url('./assets/et-bg.png');
+  background-size: cover; /* Original size */
+  background-position: left center; /* Start from extreme left */
+  background-repeat: no-repeat;
+  opacity: 0.75; /* Restored original high-impact opacity so sides are clearly visible */
+  filter: none;
+  mix-blend-mode: multiply; 
+  z-index: -2;
+  pointer-events: none;
+  
+  /* Mask to fade out the center content column. 
+     Opaque on the left (0-20%), transparent in the middle (35-65%), opaque on the right (80-100%) */
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 35%, rgba(0,0,0,0) 65%, rgba(0,0,0,1) 80%, rgba(0,0,0,1) 100%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 35%, rgba(0,0,0,0) 65%, rgba(0,0,0,1) 80%, rgba(0,0,0,1) 100%);
+  
+  /* Movement Concept-3: Highly visible parallax + dynamic drift */
+  transform: translateY(calc(var(--scroll-y, 0) * -0.4)) rotate(calc(var(--scroll-y, 0) * 0.005deg));
+  animation: ambientDrift 15s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.dynamic-bg-gradient {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /* Use a blend of warm parchment/beige at the top right spreading out */
+  background: radial-gradient(circle at top right, rgba(235, 230, 222, 0.2) 0%, #f5f0e8 100%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes ambientDrift {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-2.5%, 2.5%) scale(1.04); }
+  66% { transform: translate(2.5%, -1.5%) scale(1.06); }
+  100% { transform: translate(-1.5%, -2.5%) scale(1.04); }
+}
+
+/* Utility Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F3F4F6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* Selection */
+::selection {
+  background: rgba(229, 57, 53, 0.15);
+  color: var(--text-primary);
+}
+
+/* Focus */
+:focus-visible {
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
+}
+
+/* Button Reset */
+button {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  color: inherit;
+}
+
+input, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Global Branding — ET Pulse Logo */
+.onboarding-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ob-logo-circle {
+  width: 36px;
+  height: 36px;
+  background: #E31E24;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 800;
+  box-shadow: 0 4px 10px rgba(227, 30, 36, 0.3);
+  padding-right: 1px;
+}
+
+.ob-logo-text {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.5rem;
+  font-style: italic;
+  letter-spacing: -0.8px;
+  color: var(--brand-navy);
+  line-height: 1;
+}
+
+.onboarding-brand.clickable {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.onboarding-brand.clickable:hover {
+  opacity: 0.8;
+}

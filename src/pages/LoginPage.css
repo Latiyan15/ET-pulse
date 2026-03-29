@@ -1,0 +1,532 @@
+/* ============================================
+   LOGIN PAGE — Split Screen Layout
+   Left: Gradient + ET Pulse branding
+   Right: Signup/Login form
+   ============================================ */
+
+.login-page {
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* === LEFT PANEL — Gradient Background === */
+.login-left {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #b8c6d6;
+}
+
+.gradient-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* Recreate the exact gradient from the reference image */
+.gradient-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 110%, #e68a2a 0%, #f0a040 15%, transparent 55%),
+    radial-gradient(ellipse 100% 80% at 50% 105%, #d4793c 0%, #e89660 20%, transparent 50%),
+    radial-gradient(ellipse 120% 90% at 50% 100%, #dca0b0 0%, #e0a0a8 30%, transparent 60%),
+    radial-gradient(ellipse 140% 100% at 50% 90%, #d8a0c0 0%, #c9a0dc 40%, transparent 70%),
+    linear-gradient(180deg, #8ab4d6 0%, #a3b8d6 15%, #c0a8c8 35%, #d8a0b8 50%, #e0a0a0 70%, #e8a060 90%, #f0a838 100%);
+  animation: gradientPulse 8s ease-in-out infinite alternate;
+}
+
+.gradient-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 30% 95%, rgba(245, 133, 10, 0.4) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 70% 95%, rgba(245, 133, 10, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(230, 138, 42, 0.5) 0%, transparent 50%);
+}
+
+@keyframes gradientPulse {
+  0% { filter: brightness(1) saturate(1); }
+  100% { filter: brightness(1.05) saturate(1.1); }
+}
+
+/* Water Wave Effect */
+.water-waves {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: -5%;
+  width: 110%;
+  opacity: 0.12;
+}
+
+.wave:nth-child(1) {
+  height: 30%;
+  background: radial-gradient(ellipse at 50% 100%, rgba(245, 166, 35, 0.4) 0%, transparent 70%);
+  animation: waveRise 6s ease-in-out infinite alternate;
+  border-radius: 50% 50% 0 0;
+}
+
+.wave:nth-child(2) {
+  height: 25%;
+  background: radial-gradient(ellipse at 50% 100%, rgba(232, 130, 154, 0.3) 0%, transparent 70%);
+  animation: waveRise 8s ease-in-out infinite alternate-reverse;
+  border-radius: 45% 55% 0 0;
+}
+
+.wave:nth-child(3) {
+  height: 20%;
+  background: radial-gradient(ellipse at 50% 100%, rgba(201, 160, 220, 0.25) 0%, transparent 70%);
+  animation: waveRise 10s ease-in-out infinite alternate;
+  border-radius: 55% 45% 0 0;
+}
+
+.wave:nth-child(4) {
+  height: 35%;
+  background: radial-gradient(ellipse at 40% 100%, rgba(245, 133, 10, 0.15) 0%, transparent 60%);
+  animation: waveRise 12s ease-in-out infinite alternate-reverse;
+  border-radius: 40% 60% 0 0;
+}
+
+@keyframes waveRise {
+  0% {
+    transform: translateY(15%) scaleY(0.9);
+    opacity: 0.08;
+  }
+  50% {
+    transform: translateY(-5%) scaleY(1.1);
+    opacity: 0.15;
+  }
+  100% {
+    transform: translateY(10%) scaleY(0.95);
+    opacity: 0.1;
+  }
+}
+
+/* Floating particles */
+.particles {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  animation: particleFloat 15s infinite linear;
+}
+
+.particle:nth-child(1) { left: 20%; animation-delay: 0s; animation-duration: 12s; }
+.particle:nth-child(2) { left: 40%; animation-delay: 3s; animation-duration: 14s; }
+.particle:nth-child(3) { left: 60%; animation-delay: 6s; animation-duration: 16s; }
+.particle:nth-child(4) { left: 80%; animation-delay: 2s; animation-duration: 13s; }
+.particle:nth-child(5) { left: 30%; animation-delay: 5s; animation-duration: 15s; }
+.particle:nth-child(6) { left: 70%; animation-delay: 8s; animation-duration: 11s; }
+
+@keyframes particleFloat {
+  0% { bottom: -5%; opacity: 0; transform: translateX(0) scale(0.5); }
+  20% { opacity: 0.6; transform: translateX(10px) scale(1); }
+  80% { opacity: 0.3; transform: translateX(-10px) scale(0.8); }
+  100% { bottom: 105%; opacity: 0; transform: translateX(5px) scale(0.3); }
+}
+
+/* Star sparkle (from reference image) */
+.sparkle {
+  position: absolute;
+  z-index: 3;
+  color: rgba(255, 255, 255, 0.7);
+  animation: sparkleRotate 4s linear infinite;
+}
+
+.sparkle-1 {
+  bottom: 10%;
+  right: 10%;
+  font-size: 24px;
+}
+
+.sparkle-2 {
+  top: 30%;
+  left: 15%;
+  font-size: 14px;
+  opacity: 0.4;
+  animation-delay: 1s;
+}
+
+.sparkle-3 {
+  top: 50%;
+  right: 25%;
+  font-size: 10px;
+  opacity: 0.3;
+  animation-delay: 2s;
+}
+
+@keyframes sparkleRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1); }
+  75% { transform: rotate(270deg) scale(0.9); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Brand Name */
+.brand-container {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  animation: fadeInUp 1s var(--ease-out) 0.3s backwards;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.logo-circle {
+  width: 100px;
+  height: 100px;
+  background: #E31E24;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  padding-right: 4px; /* Optical adjustment for ET */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-size: 6rem;
+  font-weight: 700;
+  font-style: italic;
+  color: #000000;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.brand-tagline {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: rgba(10, 10, 10, 0.6);
+  margin-top: 16px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+/* === RIGHT PANEL — Form === */
+.login-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  position: relative;
+  background: #FFFFFF;
+}
+
+.login-right::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 80%;
+  height: 120%;
+  background: radial-gradient(ellipse at center, rgba(229, 57, 53, 0.03) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 420px;
+  animation: fadeInUp 0.8s var(--ease-out) 0.5s backwards;
+}
+
+.form-header {
+  margin-bottom: 36px;
+}
+
+.form-header h2 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.form-header p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* Form Fields */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: all 0.3s var(--ease-out);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--brand-red);
+  background: var(--bg-glass-strong);
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+/* Password field */
+.password-field {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover {
+  color: var(--text-secondary);
+}
+
+/* Submit button */
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--brand-red);
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out);
+  position: relative;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(229, 57, 53, 0.3);
+}
+
+.submit-btn:hover::before {
+  opacity: 1;
+}
+
+.submit-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Button Loading State */
+.submit-btn.loading {
+  cursor: not-allowed;
+  transform: scale(0.98);
+  box-shadow: 0 4px 12px rgba(75, 0, 130, 0.2);
+  opacity: 0.95;
+}
+
+.submit-btn:disabled::before {
+  display: none; /* Disable hover shimmer when loading */
+}
+
+/* Dots Loader inside Button */
+.btn-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 24px; /* Maintain button height equivalent to text */
+}
+
+.btn-loader .dot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: typingDot 1.4s infinite ease-in-out both;
+}
+
+.btn-loader .dot:nth-child(1) { animation-delay: -0.32s; }
+.btn-loader .dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingDot {
+  0%, 80%, 100% { transform: scale(0.5); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 28px 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.divider-text {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Social buttons */
+.social-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.social-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: all 0.3s var(--ease-out);
+}
+
+.social-btn:hover {
+  background: var(--bg-glass-strong);
+  border-color: rgba(75, 0, 130, 0.15);
+  transform: translateY(-1px);
+}
+
+.social-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Toggle auth mode */
+.auth-toggle {
+  text-align: center;
+  margin-top: 28px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.auth-toggle button {
+  color: var(--brand-red);
+  font-weight: 600;
+  margin-left: 4px;
+  transition: color 0.2s;
+}
+
+.auth-toggle button:hover {
+  color: var(--brand-amber);
+}
+
+/* === Responsive === */
+@media (max-width: 900px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .login-left {
+    min-height: 35vh;
+  }
+
+  .brand-name {
+    font-size: 3rem;
+  }
+
+  .brand-name .pulse-text {
+    font-size: 3.5rem;
+  }
+
+  .login-right {
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-name {
+    font-size: 2.5rem;
+  }
+
+  .brand-name .pulse-text {
+    font-size: 3rem;
+  }
+
+  .form-container {
+    max-width: 100%;
+  }
+}

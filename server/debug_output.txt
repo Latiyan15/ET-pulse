@@ -1,0 +1,63 @@
+﻿[dotenv@17.3.1] injecting env (5) from .env -- tip: ΓÜí∩╕Å secrets for agents: https://dotenvx.com/as2
+≡ƒÜÇ Starting ET Pulse Backend...
+Loading Gemini Service...
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+Γ£à Gemini Service loaded
+Loading News Service...
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+Γ£à News Service loaded
+node : C:\Users\Sara\Downloads\kios
+k1\server\node_modules\@supabase\su
+pabase-js\dist\index.cjs:147
+At line:1 char:1
++ node index.js > output.log 2>&1; 
+Get-Content output.log | Out-File 
+-F ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotS 
+   pecified: (C:\Users\Sara\D...t  
+  \index.cjs:147:String) [], Rem   
+ oteException
+    + FullyQualifiedErrorId : Nati 
+   veCommandError
+ 
+	if (!trimmedUrl.match(/^https?:\/\
+//i)) throw new Error("Invalid 
+supabaseUrl: Must be a valid HTTP 
+or HTTPS URL.");
+	                                  
+      ^
+
+Error: Invalid supabaseUrl: Must 
+be a valid HTTP or HTTPS URL.
+    at validateSupabaseUrl (C:\User
+s\Sara\Downloads\kiosk1\server\node
+_modules\@supabase\supabase-js\dist
+\index.cjs:147:48)
+    at new SupabaseClient (C:\Users
+\Sara\Downloads\kiosk1\server\node_
+modules\@supabase\supabase-js\dist\
+index.cjs:362:19)
+    at createClient (C:\Users\Sara\
+Downloads\kiosk1\server\node_module
+s\@supabase\supabase-js\dist\index.
+cjs:555:9)
+    at Object.<anonymous> (C:\Users
+\Sara\Downloads\kiosk1\server\index
+.js:33:18)
+    at Module._compile (node:intern
+al/modules/cjs/loader:1812:14)
+    at Object..js (node:internal/mo
+dules/cjs/loader:1943:10)
+    at Module.load (node:internal/m
+odules/cjs/loader:1533:32)
+    at Module._load (node:internal/
+modules/cjs/loader:1335:12)
+    at wrapModuleLoad (node:interna
+l/modules/cjs/loader:255:19)
+    at 
+Module.executeUserEntryPoint [as 
+runMain] (node:internal/modules/run
+_main:154:5)
+
+Node.js v24.14.0
