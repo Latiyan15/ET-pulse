@@ -333,32 +333,50 @@ async function fetchArticlesByProfile(sectors = [], interests = [], extraTopic =
   // --- Handle specific article analysis (single article deep dive) ---
   if (extraTopic) {
     // For briefing: search GNews for the specific headline/topic
+    const sectorLower = extraTopic.toLowerCase();
     const results = await fetchFromGNews(extraTopic, 5);
 
     if (results.length > 0) {
-      // PROACTIVE: Reconstruct the full article content using AI
-      const topArticle = results[0];
-      console.log(`🪄 Reconstructing live article: "${topArticle.title}"`);
+      // PROACTIVE: Filter results to ensure they match the sector if extraTopic is a sector
+      let filteredResults = results;
+      
+      if (SECTOR_KEYWORDS[sectorLower]) {
+        filteredResults = results.filter(a => {
+          const detected = detectSector(a.title, a.content || a.description || '');
+          return detected === sectorLower;
+        });
+      }
 
-      const fullContent = await GeminiService.reconstructArticle(
-        topArticle.title,
-        topArticle.content,
-        language,
-        userType
-      );
-
-      return [{
-        ...topArticle,
-        fullContent: fullContent,
-        content: fullContent // ensure consistent display
-      }];
+      // IF NO FILTERED RESULTS MATCH THIS SECTOR, DO NOT USE RESULTS[0] (WHICH IS UNRELATED)
+      if (filteredResults.length === 0 && SECTOR_KEYWORDS[sectorLower]) {
+        console.warn(`⚠️ No STRICT sector matches for "${extraTopic}" in live results. Skipping to Mock fallback.`);
+      } else {
+        const topArticle = filteredResults.length > 0 ? filteredResults[0] : results[0];
+        console.log(`🪄 Reconstructing live article: "${topArticle.title}"`);
+  
+        const fullContent = await GeminiService.reconstructArticle(
+          topArticle.title,
+          topArticle.content,
+          language,
+          userType
+        );
+  
+        return [{
+          ...topArticle,
+          fullContent: fullContent,
+          content: fullContent // ensure consistent display
+        }];
+      }
     }
 
     // 3. Fallback to mock if search returns nothing
-    const fallback = getMockArticles().filter(a =>
-      a.title?.toLowerCase().includes(extraTopic.toLowerCase()) ||
-      a.sector?.toLowerCase() === extraTopic.toLowerCase()
-    );
+    const fallback = getMockArticles().filter(a => {
+      // 1. Exact sector match
+      if (a.sector?.toLowerCase() === sectorLower) return true;
+      // 2. Precise word boundary match in title
+      const regex = new RegExp(`\\b${extraTopic}\\b`, 'i');
+      return regex.test(a.title || '');
+    });
 
     // CRITICAL: Always return here to prevent falling through to generic profile sectors
     return fallback.length > 0 ? fallback : [];

@@ -3,47 +3,84 @@ require('dotenv').config();
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const MODEL = 'google/gemini-2.0-flash-lite-preview-02-05:free';
+const MODEL = 'google/gemini-2.0-flash-001';
 
 /**
  * Calls OpenRouter with Gemini Flash model.
+ * Falls back to a free model if the primary model fails with a 402 (insufficient credits).
  */
-async function callOpenRouter(messages, jsonMode = false) {
-  try {
-    console.log(`🤖 AI Request: ${MODEL} | JSON: ${jsonMode}`);
-    if (!OPENROUTER_API_KEY) {
-      console.error('❌ Missing OPENROUTER_API_KEY in process.env');
-      throw new Error('API Key Missing');
-    }
+async function callOpenRouter(messages, jsonMode = false, maxTokens = 4096) {
+  const modelsToTry = [MODEL, 'google/gemini-2.0-flash-001'];
 
-    const response = await axios.post(
-      OPENROUTER_BASE_URL,
-      {
-        model: MODEL,
-        messages,
-        ...(jsonMode ? { response_format: { type: 'json_object' } } : {})
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': 'http://localhost:5173',
-          'X-Title': 'ET Pulse'
-        },
-        timeout: 30000
+  for (const currentModel of modelsToTry) {
+    try {
+      console.log(`🤖 AI Request: ${currentModel} | JSON: ${jsonMode} | MaxTokens: ${maxTokens}`);
+      if (!OPENROUTER_API_KEY) {
+        console.error('❌ Missing OPENROUTER_API_KEY in process.env');
+        throw new Error('API Key Missing');
       }
-    );
-    console.log('✅ AI Response Received');
-    return response.data.choices[0].message.content;
-  } catch (error) {
-    if (error.response) {
-      console.error(`❌ OpenRouter Error ${error.response.status}:`, JSON.stringify(error.response.data));
-    } else {
-      console.error('❌ OpenRouter Error:', error.message);
+
+      const response = await axios.post(
+        OPENROUTER_BASE_URL,
+        {
+          model: currentModel,
+          messages,
+          max_tokens: maxTokens,
+          ...(jsonMode ? { response_format: { type: 'json_object' } } : {})
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'http://localhost:5173',
+            'X-Title': 'ET Pulse'
+          },
+          timeout: 60000
+        }
+      );
+      console.log(`✅ AI Response Received (model: ${currentModel})`);
+      return response.data.choices[0].message.content;
+    } catch (error) {
+      if (error.response) {
+        console.error(`❌ OpenRouter Error ${error.response.status} (${currentModel}):`, JSON.stringify(error.response.data));
+        // If 402 (insufficient credits), try reducing max_tokens further
+        if (error.response.status === 402 && maxTokens > 1024) {
+          console.log(`🔄 Retrying ${currentModel} with reduced max_tokens (1024)...`);
+          try {
+            const retryResponse = await axios.post(
+              OPENROUTER_BASE_URL,
+              {
+                model: currentModel,
+                messages,
+                max_tokens: 1024,
+                ...(jsonMode ? { response_format: { type: 'json_object' } } : {})
+              },
+              {
+                headers: {
+                  'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                  'Content-Type': 'application/json',
+                  'HTTP-Referer': 'http://localhost:5173',
+                  'X-Title': 'ET Pulse'
+                },
+                timeout: 60000
+              }
+            );
+            console.log(`✅ AI Response Received on retry (model: ${currentModel}, max_tokens: 1024)`);
+            return retryResponse.data.choices[0].message.content;
+          } catch (retryError) {
+            console.error(`❌ Retry also failed for ${currentModel}`);
+          }
+        }
+      } else {
+        console.error(`❌ OpenRouter Error (${currentModel}):`, error.message);
+      }
+      // Continue to next model in the list
     }
-    throw error;
   }
+  // All models failed
+  throw new Error('All AI models failed. Check your OpenRouter API key credits at https://openrouter.ai/settings/credits');
 }
+
 
 /**
  * Build persona description for prompts.
